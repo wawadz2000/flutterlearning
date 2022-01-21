@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterlearning/Shared/Components.dart';
 import 'package:sqflite/sqflite.dart';
 
 class HomeLayout extends StatefulWidget {
@@ -36,11 +37,16 @@ class _HomeLayoutState extends State<HomeLayout> {
               DIcon = Icons.add;
             });
           } else {
-            ScaffoldKey.currentState!.showBottomSheet((context) => Container(
-                width: double.infinity,
-                color: Colors.blue,
-                height: 120,
-                child: Center(child: Text("has been inserted"),),
+            ScaffoldKey.currentState!.showBottomSheet((context) => Column(
+                children:[
+                  defaultFormField(
+                     controller: controller,
+                     type: type,
+                     validate: validate,
+                     label: label,
+                     prefix: prefix)
+                  
+                ]
               ));
                isbutton=true;
               setState(() {
