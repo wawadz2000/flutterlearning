@@ -12,6 +12,9 @@ class HomeLayout extends StatefulWidget {
 class _HomeLayoutState extends State<HomeLayout> {
   var database;
   var ScaffoldKey = GlobalKey<ScaffoldState>();
+  var TitleController = TextEditingController();
+  var TimeController = TextEditingController();
+
   bool isbutton = false;
   late IconData DIcon = Icons.add;
   @override
@@ -29,33 +32,77 @@ class _HomeLayoutState extends State<HomeLayout> {
         child: Text("smg"),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
+        onPressed: () {
           if (isbutton) {
             Navigator.pop(context);
-            isbutton=false;
+            isbutton = false;
             setState(() {
               DIcon = Icons.add;
             });
           } else {
-            ScaffoldKey.currentState!.showBottomSheet((context) => Column(
-                children:[
-                  defaultFormField(
-                     controller: controller,
-                     type: type,
-                     validate: validate,
-                     label: label,
-                     prefix: prefix)
-                  
-                ]
-              ));
-               isbutton=true;
-              setState(() {
-                DIcon = Icons.remove;
-              });
+            ScaffoldKey.currentState!.showBottomSheet((context) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: 150,
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      TextFormField(
+                        controller: TitleController,
+                        keyboardType: TextInputType.name,
+                        obscureText: false,
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
+                            return 'please add smg';
+                          } else {
+                            return null;
+                          }
+                        },
+                        decoration: InputDecoration(
+                          labelText: "label",
+                          prefixIcon: Icon(
+                            Icons.text_fields,
+                          ),
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                       TextFormField(
+                        controller: TimeController,
+                        keyboardType: TextInputType.datetime,
+                        obscureText: false,
+                        onTap: (){
+                          showTimePicker(
+                            context: context, 
+                            initialTime: TimeOfDay.now()
+                            );
+                        },
+                        validator: (String? value) {
+                          if (value!.isEmpty) {
+                            return 'please add smg';
+                          } else {
+                            return null;
+                          }
+                        },
+                        decoration: InputDecoration(
+                          labelText: "time",
+                          prefixIcon: Icon(
+                            Icons.timer,
+                          ),
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ]),
+                  ),
+                ));
+            isbutton = true;
+            setState(() {
+              DIcon = Icons.remove;
+            });
           }
         },
         child: Icon(DIcon),
-        ),
+      ),
     );
   }
 
@@ -79,17 +126,18 @@ class _HomeLayoutState extends State<HomeLayout> {
       },
     );
   }
+
   void InsertToDatabase() {
-    database.transaction((txn){
-      txn.rawInsert('INSERT INTO  tasks(title, fullName) VALUES("Algeria", "Besadi")'
-      )
-      .then((value){
+    database.transaction((txn) {
+      txn
+          .rawInsert(
+              'INSERT INTO  tasks(title, fullName) VALUES("Algeria", "Besadi")')
+          .then((value) {
         print("item has been added");
-      })
-      .catchError((error){
-          print("error exist :  ${error.toString()}");
+      }).catchError((error) {
+        print("error exist :  ${error.toString()}");
       });
       return null;
     });
-    }
+  }
 }
